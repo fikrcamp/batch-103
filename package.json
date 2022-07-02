@@ -1,0 +1,26 @@
+{
+  "name": "batch-103",
+  "version": "1.0.0",
+  "description": "We will be doing a food delivery application for our final project. It will be a challenge but it will also be a huge learning curve 💪🏾",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon App.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MAbdullahx/batch-103.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MAbdullahx/batch-103/issues"
+  },
+  "homepage": "https://github.com/MAbdullahx/batch-103#readme",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "mongoose": "^6.4.2",
+    "nodemon": "^2.0.18"
+  }
+}
