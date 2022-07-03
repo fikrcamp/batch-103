@@ -6,17 +6,17 @@ exports.signUp = async (req, res) => {
   try {
     const found = await User.findOne({ email: req.body.email });
     if (found) {
-      res.status(401).json({ message: "email already in use" });
+      return res.status(401).json({ message: "email already in use" });
     }
     // 2. check if password > 7
     if (req.body.password < 7) {
-      res
+      return res
         .status(401)
         .json({ message: "password should at least be 7 characters" });
     }
     // 3. password === confirm password
     if (req.body.password !== req.body.confirmPassword) {
-      res.status(401).json({ message: "paaswords don't match" });
+      return res.status(401).json({ message: "paaswords don't match" });
     }
     // 4. encrypt password
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -33,26 +33,70 @@ exports.signUp = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     //1. email exists
-    const user = await User.findOne({ email: req.body.email });
-    if (!user) {
-      res.status(401).json({ message: "email or password is incorrect" });
+    const found = await User.findOne({ email: req.body.email });
+    if (!found) {
+      return res
+        .status(401)
+        .json({ message: "email or password is incorrect" });
     }
     //2. password correct
-    const match = await bcrypt.compare(req.body.password, user.password);
+    const match = await bcrypt.compare(req.body.password, found.password);
     if (match === false) {
-      res.status(401).json({ message: "email or password is incorrect" });
+      return res
+        .status(401)
+        .json({ message: "email or password is incorrect" });
     }
     //3. login success
-    res.status(200).json({ message: `Welcome back, ${user.name}!` });
+    res.status(200).json({ message: `Welcome back, ${found.name}!` });
   } catch (err) {
     res.status(401).json({ message: "error in login" });
   }
 };
 
-exports.editUser = (req, res) => {
+exports.editUser = async (req, res) => {
   try {
+    //1. find the user from DB
+    const found = await User.findById({ _id: req.query.id });
+    //2. oldpassword === hashed password inside db
+    const match = await bcrypt.compare(
+      req.body.currentPassword,
+      found.password
+    );
+    if (match === false) {
+      return res.status(401).json({ message: "Incorrect current password" });
+    }
+    //3. newPassword > 7 characters
+    if (req.body.newPassword < 7) {
+      return res
+        .status(401)
+        .json({ message: "Password must be at least 7 characters" });
+    }
+
+    //6. newPassword === confirm password'
+    if (req.body.newPassword !== req.body.confirmNewPassword) {
+      return res.status(401).json({ message: "Passwords doesn't match" });
+    }
+
+    //5. newPassword !== oldpassword
+    const isMatch = await bcrypt.compare(req.body.newPassword, found.password);
+    if (isMatch) {
+      return res.status(401).json({
+        message: "New password cannot be the same as current password",
+      });
+    }
+
+    //6. encrypt newPassword & save new password to the DB
+    const hashedNewPassword = await bcrypt.hash(req.body.newPassword, 10);
+    // req.body.password = hashedPassword;
+
+    await User.findByIdAndUpdate(
+      { _id: req.query.id },
+      { password: hashedNewPassword }
+    );
+    //7. password edit success
     res.status(200).json({ message: "success!" });
   } catch (err) {
+    console.log(err);
     res.status(401).json({ message: "error in edit" });
   }
 };
