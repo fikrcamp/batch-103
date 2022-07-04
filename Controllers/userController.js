@@ -53,7 +53,7 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.editUser = async (req, res) => {
+exports.editPassword = async (req, res) => {
   try {
     //1. find the user from DB
     const found = await User.findById({ _id: req.query.id });
@@ -69,7 +69,7 @@ exports.editUser = async (req, res) => {
     if (req.body.newPassword < 7) {
       return res
         .status(401)
-        .json({ message: "Password must be at least 7 characters" });
+        .json({ message: "New password must be at least 7 characters" });
     }
 
     //6. newPassword === confirm password'
@@ -88,13 +88,12 @@ exports.editUser = async (req, res) => {
     //6. encrypt newPassword & save new password to the DB
     const hashedNewPassword = await bcrypt.hash(req.body.newPassword, 10);
     // req.body.password = hashedPassword;
-
     await User.findByIdAndUpdate(
       { _id: req.query.id },
       { password: hashedNewPassword }
     );
     //7. password edit success
-    res.status(200).json({ message: "success!" });
+    res.status(200).json({ message: "Password changed" });
   } catch (err) {
     console.log(err);
     res.status(401).json({ message: "error in edit" });
