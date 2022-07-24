@@ -1,5 +1,6 @@
 const express = require("express");
 const dotenv = require("dotenv");
+const cors = require("cors");
 
 const userRoutes = require("./Routes/userRoutes");
 const restaurantRoutes = require("./Routes/restaurantRoutes");
@@ -9,7 +10,9 @@ dotenv.config({ path: "./.env" });
 require("./server");
 
 const app = express();
+app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use("/user", userRoutes);
 app.use("/restaurant", restaurantRoutes);

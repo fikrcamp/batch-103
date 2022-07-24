@@ -23,6 +23,8 @@ exports.getAll = async (req, res) => {
 
 exports.create = async (req, res) => {
   try {
+    req.body.image = `images/${req.file.filename}`;
+    req.body.user = req.user.id;
     await Restaurant.create(req.body);
     res.status(200).json({ message: "created" });
   } catch (e) {
