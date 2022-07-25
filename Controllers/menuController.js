@@ -1,7 +1,24 @@
 const Menu = require("../Models/menuModel");
+const Restaurant = require("../Models/restaurantModel");
+
+exports.getAll = async (req, res) => {
+  try {
+    const usersRestaurant = await Restaurant.findOne({ user: req.user._id });
+
+    const items = await Menu.find({ restaurant: usersRestaurant._id });
+    res.status(200).json({ message: "found", items: items });
+  } catch (e) {
+    res.status(400).json({ message: "error" });
+  }
+};
 
 exports.create = async (req, res) => {
   try {
+    const found = await Restaurant.findOne({ user: req.user.id });
+
+    req.body.image = req.file.filename;
+    req.body.restaurant = found._id;
+
     await Menu.create(req.body);
     res.status(201).json({ message: "created menu item" });
   } catch (e) {

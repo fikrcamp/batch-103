@@ -1,9 +1,10 @@
 const Restaurant = require("../Models/restaurantModel");
-
+const Menu = require("../Models/menuModel");
 exports.getOne = async (req, res) => {
   try {
     const restaurant = await Restaurant.findById(req.params.id);
-    res.status(200).json({ restaurant });
+    const menu = await Menu.find({ restaurant: restaurant._id });
+    res.status(200).json({ restaurant, menu });
   } catch (e) {
     res.status(404).json({ message: "error" });
   }
@@ -14,7 +15,7 @@ exports.getAll = async (req, res) => {
     const restaurants = await Restaurant.find({});
     res.status(200).json({
       results: restaurants.length,
-      data: restaurants,
+      restaurants: restaurants,
     });
   } catch (e) {
     res.status(404).json({ message: "error" });
@@ -23,7 +24,7 @@ exports.getAll = async (req, res) => {
 
 exports.create = async (req, res) => {
   try {
-    req.body.image = `images/${req.file.filename}`;
+    req.body.image = req.file.filename;
     req.body.user = req.user.id;
     await Restaurant.create(req.body);
     res.status(200).json({ message: "created" });
