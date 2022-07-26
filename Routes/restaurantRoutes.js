@@ -7,6 +7,10 @@ const { upload } = require("../Utils/multer");
 const router = express.Router();
 
 router
+  .route("/user")
+  .get(userController.protect, restaurantController.getUsersRestaurant);
+
+router
   .route("/")
   .get(restaurantController.getAll)
   .post(
@@ -18,7 +22,7 @@ router
 router
   .route("/:id")
   .get(restaurantController.getOne)
-  .put(restaurantController.edit)
+  .put(upload.single("image"), restaurantController.edit)
   .delete(restaurantController.delete);
 
 module.exports = router;

@@ -5,6 +5,7 @@ const cors = require("cors");
 const userRoutes = require("./Routes/userRoutes");
 const restaurantRoutes = require("./Routes/restaurantRoutes");
 const menuRoutes = require("./Routes/menuRoutes");
+const orderRoutes = require("./Routes/orderRoutes");
 
 dotenv.config({ path: "./.env" });
 require("./server");
@@ -17,6 +18,7 @@ app.use(express.static("Images"));
 app.use("/user", userRoutes);
 app.use("/restaurant", restaurantRoutes);
 app.use("/menu", menuRoutes);
+app.use("/order", orderRoutes);
 
 const port = process.env.PORT || 8000;
 

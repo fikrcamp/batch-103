@@ -129,6 +129,7 @@ exports.protect = (req, res, next) => {
       // console.log(decoded.data);
       req.user = decoded.data;
     });
+
     next();
   } catch (e) {
     return res.status(404).json({ message: "error" });

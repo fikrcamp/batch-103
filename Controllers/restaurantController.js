@@ -26,8 +26,19 @@ exports.create = async (req, res) => {
   try {
     req.body.image = req.file.filename;
     req.body.user = req.user.id;
+
     await Restaurant.create(req.body);
     res.status(200).json({ message: "created" });
+  } catch (e) {
+    console.log(e.message);
+    res.status(404).json({ message: "error" });
+  }
+};
+
+exports.getUsersRestaurant = async (req, res) => {
+  try {
+    const restaurant = await Restaurant.findOne({ user: req.user.id });
+    res.status(200).json({ message: "found", restaurant });
   } catch (e) {
     res.status(404).json({ message: "error" });
   }

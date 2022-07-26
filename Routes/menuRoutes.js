@@ -10,6 +10,10 @@ router
   .post(userController.protect, upload.single("image"), menuController.create)
   .get(userController.protect, menuController.getAll);
 
-router.route("/:id").put(menuController.edit).delete(menuController.delete);
+router
+  .route("/:id")
+  .get(menuController.getOne)
+  .put(upload.single("image"), menuController.edit)
+  .delete(menuController.delete);
 
 module.exports = router;
